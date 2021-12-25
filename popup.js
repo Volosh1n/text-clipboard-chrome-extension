@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.storage.local.get("samples", (result) => {
         if(Array.isArray(result.samples)) {
           const newCollectionWithoutDuplicates = [...new Set([...result.samples,...[newSample]])]
-          chrome.storage.local.set({samples: newCollectionWithoutDuplicates}, () => {})
+          chrome.storage.local.set({"samples": newCollectionWithoutDuplicates}, () => {})
         } else {
           chrome.storage.local.set({"samples": [newSample]})
         }
