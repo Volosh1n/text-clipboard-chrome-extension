@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="popup.js"></script>
+    <style>
+      body {
+        width: 500px;
+        background-color: lightslategray;
+      }
+      textarea {
+        border-radius: 5px;
+        width: 100%;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        border-radius: 7px;
+        padding: 5px;
+        border: 1px solid transparent;
+        transition: .5s ease;
+      }
+      li:hover {
+        border: 1px solid gray;
+        cursor: pointer;
+        background-color: white;
+        transition: .5s ease;
+      }
+    </style>
+    <style></style>
+    <title>Text clipboard</title>
+  </head>
+  <body>
+    <textarea id="main-textarea" rows="5"></textarea>
+    <button id="save">Save</button>
+    <ul id="main-list"></ul>
+  </body>
+</html>
