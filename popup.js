@@ -3,11 +3,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const textarea =  document.getElementById("main-textarea")
   const saveButton = document.getElementById("save")
   const PROMPT_MESSAGE = "Copy to clipboard: Ctrl+C, Enter"
+  const HTML_CLASS_FOR_SAMPLES = "sample-text"
+
+  textarea.focus()
+
+  const createSpanForText = (sample) => {
+    let sampleTextSpan = document.createElement("span")
+    sampleTextSpan.innerText = sample
+    sampleTextSpan.classList.add(HTML_CLASS_FOR_SAMPLES)
+    sampleTextSpan.addEventListener("click", () => window.prompt(PROMPT_MESSAGE, sample))
+    return sampleTextSpan
+  }
+
+  const createRemoveListItemButton = () => {
+    let removeListItemButton = document.createElement("span")
+    removeListItemButton.style.fontWeight = "bold"
+    removeListItemButton.style.color = "darkred"
+    removeListItemButton.innerText = "x"
+    removeListItemButton.addEventListener("click", (event, ke, button) => {
+      removeListItemButton.parentElement.remove()
+      const currentListOfSamplesTags = document.getElementsByClassName(HTML_CLASS_FOR_SAMPLES)
+      const currentListOfSamplesTexts = Array.prototype.slice.call(currentListOfSamplesTags).map((el) => el.innerHTML)
+      chrome.storage.local.set({"samples": currentListOfSamplesTexts}, () => {})
+    })
+    return removeListItemButton
+  }
 
   const addSampleToTheList = (sample) => {
+    let sampleTextSpan = createSpanForText(sample)
+    let removeListItemButton = createRemoveListItemButton()
     let newItemInTheList = document.createElement("li")
-    newItemInTheList.innerHTML = sample
-    newItemInTheList.addEventListener("click", () =>  window.prompt(PROMPT_MESSAGE, sample))
+
+    newItemInTheList.appendChild(removeListItemButton)
+    newItemInTheList.appendChild(sampleTextSpan)
     mainList.appendChild(newItemInTheList)
   }
 
@@ -24,9 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   saveButton.addEventListener("click", () => {
     const newSample = textarea.value.replace(/\s+/g, " ").trim()
-    textarea.value = ""
 
     if(newSample.length) {
+      textarea.value = ""
+      textarea.focus()
+
       chrome.storage.local.get("samples", (result) => {
         if(Array.isArray(result.samples)) {
           const newCollectionWithoutDuplicates = [...new Set([...result.samples,...[newSample]])]
