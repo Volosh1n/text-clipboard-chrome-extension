@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const refreshList = () => {
     mainList.innerHTML = ""
-    chrome.storage.local.get("samples", (result) => {
+    chrome.storage.sync.get("samples", (result) => {
       if(Array.isArray(result.samples)) {
         result.samples.forEach((sample) => addSampleToTheList(sample))
       }
@@ -57,12 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
       textarea.value = ""
       textarea.focus()
 
-      chrome.storage.local.get("samples", (result) => {
+      chrome.storage.sync.get("samples", (result) => {
         if(Array.isArray(result.samples)) {
           const newCollectionWithoutDuplicates = [...new Set([...result.samples,...[newSample]])]
-          chrome.storage.local.set({"samples": newCollectionWithoutDuplicates}, () => {})
+          chrome.storage.sync.set({"samples": newCollectionWithoutDuplicates}, () => {})
         } else {
-          chrome.storage.local.set({"samples": [newSample]})
+          chrome.storage.sync.set({"samples": [newSample]})
         }
         refreshList()
       })
