@@ -20,11 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     removeListItemButton.style.fontWeight = "bold"
     removeListItemButton.style.color = "darkred"
     removeListItemButton.innerText = "x"
-    removeListItemButton.addEventListener("click", (event, ke, button) => {
+    removeListItemButton.addEventListener("click", () => {
       removeListItemButton.parentElement.remove()
       const currentListOfSamplesTags = document.getElementsByClassName(HTML_CLASS_FOR_SAMPLES)
       const currentListOfSamplesTexts = Array.prototype.slice.call(currentListOfSamplesTags).map((el) => el.innerHTML)
-      chrome.storage.local.set({"samples": currentListOfSamplesTexts}, () => {})
+      chrome.storage.sync.set({"samples": currentListOfSamplesTexts}, () => {})
     })
     return removeListItemButton
   }
