@@ -1,11 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const body = document.querySelector("body")
   const mainList = document.getElementById("main-list")
-  const textarea =  document.getElementById("main-textarea")
-  const saveButton = document.getElementById("save")
+  const addButton = document.getElementById("add")
+
   const PROMPT_MESSAGE = "Copy to clipboard: Ctrl+C, Enter"
   const HTML_CLASS_FOR_SAMPLES = "sample-text"
-
-  textarea.focus()
 
   const createSpanForText = (sample) => {
     let sampleTextSpan = document.createElement("span")
@@ -42,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const refreshList = () => {
     mainList.innerHTML = ""
     chrome.storage.sync.get("samples", (result) => {
-      if(Array.isArray(result.samples)) {
+      if (Array.isArray(result.samples)) {
         result.samples.forEach((sample) => addSampleToTheList(sample))
       }
     })
@@ -50,22 +49,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   refreshList()
 
-  saveButton.addEventListener("click", () => {
-    const newSample = textarea.value.replace(/\s+/g, " ").trim()
+  addButton.addEventListener("click", () => {
+    let textarea = document.createElement("textarea")
+    let saveButton = document.createElement("button")
+    saveButton.innerText = "Save"
 
-    if(newSample.length) {
-      textarea.value = ""
-      textarea.focus()
+    textarea.focus()
 
-      chrome.storage.sync.get("samples", (result) => {
-        if(Array.isArray(result.samples)) {
-          const newCollectionWithoutDuplicates = [...new Set([...result.samples,...[newSample]])]
-          chrome.storage.sync.set({"samples": newCollectionWithoutDuplicates}, () => {})
-        } else {
-          chrome.storage.sync.set({"samples": [newSample]})
-        }
-        refreshList()
-      })
-    }
+    body.appendChild(textarea)
+    body.appendChild(saveButton)
+
+    saveButton.addEventListener("click", () => {
+      saveButton.classList.add("disabled")
+
+      const newSample = textarea.value.replace(/\s+/g, " ").trim()
+
+      if (newSample.length) {
+        textarea.value = ""
+        textarea.focus()
+
+        chrome.storage.sync.get("samples", (result) => {
+          if (Array.isArray(result.samples)) {
+            const newCollectionWithoutDuplicates = [...new Set([...result.samples,...[newSample]])]
+            chrome.storage.sync.set({"samples": newCollectionWithoutDuplicates}, () => {})
+          } else {
+            chrome.storage.sync.set({"samples": [newSample]})
+          }
+          refreshList()
+        })
+      }
+
+      textarea.remove()
+      saveButton.remove()
+      saveButton.classList.remove("disabled")
+    })
   })
 })
