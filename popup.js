@@ -3,14 +3,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainList = document.getElementById("main-list")
   const addButton = document.getElementById("add")
 
-  const PROMPT_MESSAGE = "Copy to clipboard: Ctrl+C, Enter"
+  const SUCCESSFULLY_COPIED_MESSAGE = "Copied to clipboard!"
   const HTML_CLASS_FOR_SAMPLES = "sample-text"
+  const HTML_CLASS_FOR_COPIED_NOTIFICATION = "text-copied-message"
 
   const createSpanForText = (sample) => {
     let sampleTextSpan = document.createElement("span")
     sampleTextSpan.innerText = sample
     sampleTextSpan.classList.add(HTML_CLASS_FOR_SAMPLES)
-    sampleTextSpan.addEventListener("click", () => window.prompt(PROMPT_MESSAGE, sample))
+    sampleTextSpan.addEventListener("click", () => {
+      navigator.clipboard.writeText(sample)
+      let textCopiedMessage = document.createElement("span")
+      textCopiedMessage.classList.add(HTML_CLASS_FOR_COPIED_NOTIFICATION)
+      textCopiedMessage.innerText = SUCCESSFULLY_COPIED_MESSAGE
+      sampleTextSpan.parentNode.querySelectorAll(".text-copied-message").forEach(node => node.remove())
+      sampleTextSpan.parentNode.appendChild(textCopiedMessage);
+      setTimeout(() => { textCopiedMessage.remove() }, 3000)
+    })
     return sampleTextSpan
   }
 
